@@ -11,7 +11,7 @@ export const tournaments = [
       "Shadow Hunters",
     ],
     venue: "Falcon Park",
-    image: "test3.png",
+    image: "autumn-t20.png",
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ export const tournaments = [
     format: "One Day International",
     teams: ["Crimson Hawks", "Silver Lions"],
     venue: "Harmony Grounds",
-    image: "tour3.jpeg",
+    image: "regional-odi.jpeg",
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ export const tournaments = [
     format: "Test (5 days)",
     teams: ["Elite Eagles", "Iron Giants", "Titan Warriors", "Victory Knights"],
     venue: "Majestic Stadium",
-    image: "tour2.jpeg",
+    image: "winter-test.jpeg",
   },
   {
     id: 4,
@@ -38,7 +38,7 @@ export const tournaments = [
     format: "Twenty20",
     teams: ["Local Legends", "Unity Strikers"],
     venue: "Unity Field",
-    image: "tour.jpeg",
+    image: "community-league.jpeg",
   },
   {
     id: 5,
@@ -47,7 +47,7 @@ export const tournaments = [
     format: "One Day International",
     teams: ["Valiant Panthers", "Resolute Rhinos"],
     venue: "Pioneer Arena",
-    image: "test4.png",
+    image: "district-cup.png",
   },
 ];
 
