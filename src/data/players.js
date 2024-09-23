@@ -1,0 +1,56 @@
+export const players = [
+  {
+    id: 1,
+    name: "John Smith",
+    role: "Batsman",
+    image: "man1.png",
+    stats: { matches: 50, runs: 2500, average: 50.0, strikeRate: 85.5 },
+  },
+  {
+    id: 2,
+    name: "Sarah Johnson",
+    role: "All-rounder",
+    image: "woman1.png",
+    stats: {
+      matches: 45,
+      runs: 1800,
+      wickets: 60,
+      average: 40.0,
+      economy: 4.2,
+    },
+  },
+  {
+    id: 3,
+    name: "Michael Brown",
+    role: "Bowler",
+    image: "man2.png",
+    stats: { matches: 40, wickets: 80, average: 22.5, economy: 3.8 },
+  },
+  {
+    id: 4,
+    name: "David Lee",
+    role: "Batsman",
+    image: "man3.png",
+    stats: { matches: 60, runs: 3200, average: 45.5, strikeRate: 88.3 },
+  },
+  {
+    id: 5,
+    name: "Emma Wilson",
+    role: "Bowler",
+    image: "woman2.png",
+    stats: { matches: 55, wickets: 75, average: 23.4, economy: 4.0 },
+  },
+  {
+    id: 6,
+    name: "James Taylor",
+    role: "All-rounder",
+    image: "woman3.png",
+    stats: {
+      matches: 50,
+      runs: 2000,
+      wickets: 55,
+      average: 38.2,
+      economy: 4.1,
+    },
+  },
+];
