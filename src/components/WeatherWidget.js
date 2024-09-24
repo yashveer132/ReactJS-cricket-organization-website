@@ -33,7 +33,6 @@ export default function WeatherWidget() {
         setError(null);
       } catch (err) {
         console.error("Error fetching weather data:", err);
-        setError("Failed to load live weather data. Showing default data.");
         setWeatherData(dummyWeatherData);
       }
     };
