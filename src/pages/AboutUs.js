@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { milestones, achievements } from "../data/data";
 import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
 
 export default function AboutUs() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="container mx-auto px-6 py-12">
       <motion.h1

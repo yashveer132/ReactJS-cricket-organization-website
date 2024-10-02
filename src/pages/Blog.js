@@ -1,9 +1,24 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { blogPosts } from "../data/blogPosts";
 
 export default function Blog() {
   const [selectedPost, setSelectedPost] = useState(null);
+  const detailsRef = useRef(null);
+
+  const scrollToDetails = () => {
+    detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  useEffect(() => {
+    if (selectedPost && window.innerWidth <= 768) {
+      scrollToDetails();
+    }
+  }, [selectedPost]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="container mx-auto px-6 py-12">
@@ -43,6 +58,7 @@ export default function Blog() {
         </motion.div>
         <motion.div
           className="lg:col-span-2 bg-gray-50 border border-gray-200 rounded-lg shadow-lg p-8"
+          ref={detailsRef}
           initial={{ x: 50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.5 }}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaCreditCard } from "react-icons/fa";
 import { GiCricketBat } from "react-icons/gi";
@@ -88,6 +88,10 @@ export default function TeamRegistration() {
   };
 
   const prevStage = () => setCurrentStage(currentStage - 1);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-12">

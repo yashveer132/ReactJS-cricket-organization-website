@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GiTrophy, GiCricketBat } from "react-icons/gi";
 import {
@@ -141,6 +141,10 @@ export default function RegistrationForm() {
   const prevStage = () => {
     if (currentStage > 0) setCurrentStage(currentStage - 1);
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-12 md:px-6 bg-green-50 relative">

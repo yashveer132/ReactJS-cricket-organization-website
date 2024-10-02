@@ -3,8 +3,12 @@ import { FaRunning, FaBowlingBall, FaChartBar } from "react-icons/fa";
 import { GiCricketBat, GiTrophy } from "react-icons/gi";
 import { BiCricketBall } from "react-icons/bi";
 import { players } from "../data/players";
+import { useEffect } from "react";
 
 export default function PlayerProfiles() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="container mx-auto px-4 py-12">
       <motion.h1

@@ -46,6 +46,10 @@ export default function Contact() {
       (prev) => (prev - 1 + testimonials.length) % testimonials.length
     );
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="container mx-auto px-6 py-6">
       <motion.h1

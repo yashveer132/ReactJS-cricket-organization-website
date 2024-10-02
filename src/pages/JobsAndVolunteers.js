@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   FaBriefcase,
@@ -12,6 +12,37 @@ import { volunteerOpportunities } from "../data/volunteerOpportunities";
 export default function JobsAndVolunteers() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [selectedVolunteer, setSelectedVolunteer] = useState(null);
+
+  const jobDetailsRef = useRef(null);
+  const volunteerDetailsRef = useRef(null);
+
+  const scrollToJobDetails = () => {
+    jobDetailsRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const scrollToVolunteerDetails = () => {
+    volunteerDetailsRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const handleJobSelect = (job) => {
+    setSelectedJob(job);
+    scrollToJobDetails();
+  };
+
+  const handleVolunteerSelect = (opportunity) => {
+    setSelectedVolunteer(opportunity);
+    scrollToVolunteerDetails();
+  };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8 flex flex-col items-center justify-center min-h-screen">
@@ -41,7 +72,7 @@ export default function JobsAndVolunteers() {
                 className="cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedJob(job)}
+                onClick={() => handleJobSelect(job)}
               >
                 <div
                   className={`p-4 rounded-lg flex items-center space-x-3 ${
@@ -64,6 +95,7 @@ export default function JobsAndVolunteers() {
           {selectedJob && (
             <motion.div
               className="mt-6 p-6 bg-green-50 rounded-lg shadow-inner w-full"
+              ref={jobDetailsRef}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
@@ -99,7 +131,7 @@ export default function JobsAndVolunteers() {
                 className="cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedVolunteer(opportunity)}
+                onClick={() => handleVolunteerSelect(opportunity)}
               >
                 <div
                   className={`p-4 rounded-lg flex items-center space-x-3 ${
@@ -122,6 +154,7 @@ export default function JobsAndVolunteers() {
           {selectedVolunteer && (
             <motion.div
               className="mt-6 p-6 bg-blue-50 rounded-lg shadow-inner w-full"
+              ref={volunteerDetailsRef}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}

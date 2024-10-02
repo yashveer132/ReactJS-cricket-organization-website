@@ -1,13 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { cricketProducts } from "../data/products";
 
 export default function EquipmentShop() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
+  const cartRef = useRef(null);
 
   useEffect(() => {
     setProducts(cricketProducts);
+  }, []);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
   }, []);
 
   const addToCart = (product) => {
@@ -21,6 +26,7 @@ export default function EquipmentShop() {
           )
         : [...prevCart, { ...product, quantity: 1 }];
     });
+    scrollToCart();
   };
 
   const removeFromCart = (productId) => {
@@ -34,6 +40,10 @@ export default function EquipmentShop() {
               : item
           );
     });
+  };
+
+  const scrollToCart = () => {
+    cartRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const totalPrice = cart.reduce(
@@ -86,6 +96,7 @@ export default function EquipmentShop() {
 
         <motion.div
           className="bg-white rounded-lg shadow-md p-4 sm:p-6 transition-all duration-300 hover:shadow-xl"
+          ref={cartRef}
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   FaCalendarAlt,
@@ -12,6 +12,21 @@ import { trainingPrograms } from "../data/trainingPrograms";
 
 export default function TrainingAndCoaching() {
   const [selectedProgram, setSelectedProgram] = useState(null);
+  const detailsRef = useRef(null);
+
+  const scrollToDetails = () => {
+    detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    if (selectedProgram && window.innerWidth <= 768) {
+      scrollToDetails();
+    }
+  }, [selectedProgram]);
 
   return (
     <div className="container mx-auto px-4 py-12 flex flex-col items-center">
@@ -58,6 +73,7 @@ export default function TrainingAndCoaching() {
 
         <motion.div
           className="md:col-span-2 bg-white rounded-lg shadow-lg p-8 flex flex-col items-center justify-center"
+          ref={detailsRef}
           initial={{ x: 50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.5 }}
