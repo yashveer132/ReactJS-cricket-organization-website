@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { cardData } from "../data/cardData";
 import Confetti from "react-confetti";
-import { useNavigate } from "react-router-dom";
+
 
 const Card = ({ data }) => (
   <motion.div
