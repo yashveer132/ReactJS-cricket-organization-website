@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { cardData } from "../data/cardData";
 import Confetti from "react-confetti";
+import { useNavigate } from "react-router-dom";
 
 const Card = ({ data }) => (
   <motion.div
@@ -31,7 +32,7 @@ const Card = ({ data }) => (
 export default function LandingPage() {
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight);
-  const [showConfetti, setShowConfetti] = useState(true);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -39,12 +40,18 @@ export default function LandingPage() {
       setHeight(window.innerHeight);
     };
 
-    window.addEventListener("resize", handleResize);
-    const confettiTimer = setTimeout(() => setShowConfetti(false), 3000);
+    const isFirstVisit = !localStorage.getItem("hasVisited");
+    if (isFirstVisit) {
+      setShowConfetti(true);
+      localStorage.setItem("hasVisited", "true");
 
+      const confettiTimer = setTimeout(() => setShowConfetti(false), 3000);
+      return () => clearTimeout(confettiTimer);
+    }
+
+    window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
-      clearTimeout(confettiTimer);
     };
   }, []);
 

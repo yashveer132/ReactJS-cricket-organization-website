@@ -24,6 +24,7 @@ export default function TeamRegistration() {
 
   const handleTeamInfoChange = (e) =>
     setTeamInfo({ ...teamInfo, [e.target.name]: e.target.value });
+
   const handlePlayerChange = (index, e) => {
     const updatedPlayers = [...players];
     updatedPlayers[index] = {
@@ -32,41 +33,64 @@ export default function TeamRegistration() {
     };
     setPlayers(updatedPlayers);
   };
-  const addPlayer = () =>
-    players.length < 11
-      ? setPlayers([...players, { name: "", age: "", role: "" }])
-      : toast.warn("You can only add up to 11 players.");
-  const removePlayer = (index) =>
-    setPlayers(players.filter((_, i) => i !== index));
+
+  const addPlayer = () => {
+    if (players.length < 11) {
+      setPlayers([...players, { name: "", age: "", role: "" }]);
+    } else {
+      toast.warn("You can only add up to 11 players.");
+    }
+  };
+
+  const removePlayer = (index) => {
+    if (players.length > 1) {
+      setPlayers(players.filter((_, i) => i !== index));
+    }
+  };
 
   const handlePaymentInfoChange = (e) =>
     setPaymentInfo({ ...paymentInfo, [e.target.name]: e.target.value });
 
   const validate = () => {
     const newErrors = {};
+
     if (currentStage === 0) {
-      if (!teamInfo.name) newErrors.name = "Team name is required";
-      if (!teamInfo.category) newErrors.category = "Category is required";
-      if (!teamInfo.coach) newErrors.coach = "Coach name is required";
+      if (!/^[a-zA-Z\s]+$/.test(teamInfo.name)) {
+        newErrors.name = "Team name must contain only letters and spaces.";
+      }
+      if (!teamInfo.category) newErrors.category = "Category is required.";
+      if (!/^[a-zA-Z\s]+$/.test(teamInfo.coach)) {
+        newErrors.coach = "Coach name must contain only letters and spaces.";
+      }
     }
+
     if (currentStage === 1) {
       players.forEach((player, index) => {
-        if (!player.name)
-          newErrors[`playerName${index}`] = "Player name is required";
-        if (!player.age || player.age <= 10)
-          newErrors[`playerAge${index}`] = "Player age must be greater than 10";
-        if (!player.role)
-          newErrors[`playerRole${index}`] = "Player role is required";
+        if (!/^[a-zA-Z\s]+$/.test(player.name)) {
+          newErrors[`playerName${index}`] =
+            "Player name must contain only letters and spaces.";
+        }
+        if (isNaN(player.age) || player.age < 11 || player.age > 50) {
+          newErrors[`playerAge${index}`] = "Age must be between 11 and 50.";
+        }
+        if (!player.role) {
+          newErrors[`playerRole${index}`] = "Player role is required.";
+        }
       });
-      if (players.length < 1)
-        newErrors.players = "At least one player is required.";
     }
+
     if (currentStage === 2) {
-      if (!paymentInfo.cardNumber)
-        newErrors.cardNumber = "Card number is required";
-      if (!paymentInfo.expiry) newErrors.expiry = "Expiry date is required";
-      if (!paymentInfo.cvv) newErrors.cvv = "CVV is required";
+      if (!/^\d{16}$/.test(paymentInfo.cardNumber)) {
+        newErrors.cardNumber = "Card number must be 16 digits.";
+      }
+      if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(paymentInfo.expiry)) {
+        newErrors.expiry = "Expiry date must be in MM/YY format.";
+      }
+      if (!/^\d{3}$/.test(paymentInfo.cvv)) {
+        newErrors.cvv = "CVV must be 3 digits.";
+      }
     }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -76,10 +100,7 @@ export default function TeamRegistration() {
     if (validate()) {
       console.log("Submission data:", { teamInfo, players, paymentInfo });
       toast.success("Registration submitted successfully!");
-      setTeamInfo({ name: "", category: "", coach: "" });
-      setPlayers([{ name: "", age: "", role: "" }]);
-      setPaymentInfo({ cardNumber: "", expiry: "", cvv: "" });
-      setCurrentStage(0);
+      resetForm();
     }
   };
 
@@ -89,9 +110,16 @@ export default function TeamRegistration() {
 
   const prevStage = () => setCurrentStage(currentStage - 1);
 
+  const resetForm = () => {
+    setTeamInfo({ name: "", category: "", coach: "" });
+    setPlayers([{ name: "", age: "", role: "" }]);
+    setPaymentInfo({ cardNumber: "", expiry: "", cvv: "" });
+    setCurrentStage(0);
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [currentStage]);
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -138,59 +166,49 @@ export default function TeamRegistration() {
             </div>
           </div>
         </div>
+
         <form onSubmit={handleSubmit}>
           {currentStage === 0 && (
-            <motion.div
-              initial={{ x: 50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -50, opacity: 0 }}
-            >
+            <div>
               <h2 className="text-2xl font-semibold mb-4">
                 <FaUser className="inline mr-2" /> Team Information
               </h2>
-              <div className="space-y-4">
-                {["name", "category", "coach"].map((field, idx) => (
-                  <div key={field}>
-                    <label className="block text-sm font-medium text-gray-700">
-                      {field === "category"
-                        ? "Category"
-                        : field.charAt(0).toUpperCase() + field.slice(1)}
-                    </label>
-                    {field === "category" ? (
-                      <select
-                        name="category"
-                        value={teamInfo.category}
-                        onChange={handleTeamInfoChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                      >
-                        <option value="">Select a category</option>
-                        <option value="Under-19">Under-19</option>
-                        <option value="Senior">Senior</option>
-                        <option value="Women">Women</option>
-                      </select>
-                    ) : (
-                      <input
-                        type="text"
-                        name={field}
-                        value={teamInfo[field]}
-                        onChange={handleTeamInfoChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                      />
-                    )}
-                    {errors[field] && (
-                      <p className="text-red-500 text-sm">{errors[field]}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+              {["name", "category", "coach"].map((field) => (
+                <div key={field} className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    {field.charAt(0).toUpperCase() + field.slice(1)}
+                  </label>
+                  {field === "category" ? (
+                    <select
+                      name={field}
+                      value={teamInfo[field]}
+                      onChange={handleTeamInfoChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                    >
+                      <option value="">Select a category</option>
+                      <option value="Under-19">Under-19</option>
+                      <option value="Senior">Senior</option>
+                      <option value="Women">Women</option>
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      name={field}
+                      value={teamInfo[field]}
+                      onChange={handleTeamInfoChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                    />
+                  )}
+                  {errors[field] && (
+                    <p className="text-red-500 text-sm">{errors[field]}</p>
+                  )}
+                </div>
+              ))}
+            </div>
           )}
+
           {currentStage === 1 && (
-            <motion.div
-              initial={{ x: 50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -50, opacity: 0 }}
-            >
+            <div>
               <h2 className="text-2xl font-semibold mb-4">Player Details</h2>
               {players.map((player, index) => (
                 <div key={index} className="mb-4 p-4 bg-gray-50 rounded-lg">
@@ -198,67 +216,72 @@ export default function TeamRegistration() {
                     Player {index + 1}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {["name", "age", "role"].map((field) => (
-                      <div key={field}>
-                        <label className="block text-sm font-medium text-gray-700">
-                          {field.charAt(0).toUpperCase() + field.slice(1)}
-                        </label>
-                        {field === "role" ? (
-                          <select
-                            name="role"
-                            value={player.role}
-                            onChange={(e) => handlePlayerChange(index, e)}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                          >
-                            <option value="">Select a role</option>
-                            {[
-                              "Batsman",
-                              "Bowler",
-                              "All-rounder",
-                              "Wicket-keeper",
-                            ].map((role) => (
-                              <option key={role} value={role}>
-                                {role}
-                              </option>
-                            ))}
-                          </select>
-                        ) : (
-                          <input
-                            type={field === "age" ? "number" : "text"}
-                            name={field}
-                            value={player[field]}
-                            onChange={(e) => handlePlayerChange(index, e)}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                            min={field === "age" ? "11" : undefined}
-                          />
-                        )}
-                        {errors[
-                          `player${
-                            field.charAt(0).toUpperCase() + field.slice(1)
-                          }${index}`
-                        ] && (
-                          <p className="text-red-500 text-sm">
-                            {
-                              errors[
-                                `player${
-                                  field.charAt(0).toUpperCase() + field.slice(1)
-                                }${index}`
-                              ]
-                            }
-                          </p>
-                        )}
-                      </div>
-                    ))}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={player.name}
+                        onChange={(e) => handlePlayerChange(index, e)}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                      />
+                      {errors[`playerName${index}`] && (
+                        <p className="text-red-500 text-sm">
+                          {errors[`playerName${index}`]}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Age
+                      </label>
+                      <input
+                        type="number"
+                        name="age"
+                        value={player.age}
+                        onChange={(e) => handlePlayerChange(index, e)}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                      />
+                      {errors[`playerAge${index}`] && (
+                        <p className="text-red-500 text-sm">
+                          {errors[`playerAge${index}`]}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Role
+                      </label>
+                      <select
+                        name="role"
+                        value={player.role}
+                        onChange={(e) => handlePlayerChange(index, e)}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                      >
+                        <option value="">Select Role</option>
+                        <option value="Batsman">Batsman</option>
+                        <option value="Bowler">Bowler</option>
+                      </select>
+                      {errors[`playerRole${index}`] && (
+                        <p className="text-red-500 text-sm">
+                          {errors[`playerRole${index}`]}
+                        </p>
+                      )}
+                    </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => removePlayer(index)}
-                    disabled={players.length <= 1}
                     className={`mt-2 ${
                       players.length <= 1
-                        ? "bg-gray-300 cursor-not-allowed"
+                        ? "bg-gray-300"
                         : "bg-red-600 hover:bg-red-700"
-                    } text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-300`}
+                    } text-white px-4 py-2 rounded-lg font-semibold`}
+                    disabled={players.length <= 1}
                   >
                     Remove Player
                   </button>
@@ -267,52 +290,46 @@ export default function TeamRegistration() {
               <button
                 type="button"
                 onClick={addPlayer}
-                className="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300"
+                className="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700"
                 disabled={players.length >= 11}
               >
                 Add Player
               </button>
-            </motion.div>
+            </div>
           )}
+
           {currentStage === 2 && (
-            <motion.div
-              initial={{ x: 50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -50, opacity: 0 }}
-            >
+            <div>
               <h2 className="text-2xl font-semibold mb-4">
                 <FaCreditCard className="inline mr-2" /> Payment Information
               </h2>
-              <div className="space-y-4">
-                {["cardNumber", "expiry", "cvv"].map((field, index) => (
-                  <div key={field}>
-                    <label className="block text-sm font-medium text-gray-700">
-                      {field === "expiry"
-                        ? "Expiry Date"
-                        : field.charAt(0).toUpperCase() + field.slice(1)}
-                    </label>
-                    <input
-                      type={field === "expiry" ? "text" : "text"}
-                      name={field}
-                      value={paymentInfo[field]}
-                      onChange={handlePaymentInfoChange}
-                      placeholder={field === "expiry" ? "MM/YY" : ""}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                    />
-                    {errors[field] && (
-                      <p className="text-red-500 text-sm">{errors[field]}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+              {["cardNumber", "expiry", "cvv"].map((field) => (
+                <div key={field} className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    {field.charAt(0).toUpperCase() + field.slice(1)}
+                  </label>
+                  <input
+                    type="text"
+                    name={field}
+                    value={paymentInfo[field]}
+                    onChange={handlePaymentInfoChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                    placeholder={field === "expiry" ? "MM/YY" : ""}
+                  />
+                  {errors[field] && (
+                    <p className="text-red-500 text-sm">{errors[field]}</p>
+                  )}
+                </div>
+              ))}
+            </div>
           )}
+
           <div className="mt-8 flex justify-between">
             {currentStage > 0 && (
               <button
                 type="button"
                 onClick={prevStage}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-400 transition-colors duration-300"
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-400"
               >
                 Previous
               </button>
@@ -321,14 +338,14 @@ export default function TeamRegistration() {
               <button
                 type="button"
                 onClick={nextStage}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300"
+                className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700"
               >
                 Next
               </button>
             ) : (
               <button
                 type="submit"
-                className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300"
+                className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700"
               >
                 Submit Registration
               </button>

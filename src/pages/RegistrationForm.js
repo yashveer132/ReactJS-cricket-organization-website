@@ -48,7 +48,13 @@ export default function RegistrationForm() {
 
     if (currentStage === 0) {
       if (!firstName.trim()) formErrors.firstName = "First name is required";
+      else if (!/^[a-zA-Z\s]+$/.test(firstName))
+        formErrors.firstName = "First name should only contain letters";
+
       if (!lastName.trim()) formErrors.lastName = "Last name is required";
+      else if (!/^[a-zA-Z\s]+$/.test(lastName))
+        formErrors.lastName = "Last name should only contain letters";
+
       if (!dateOfBirth) {
         formErrors.dateOfBirth = "Date of birth is required";
       } else {
@@ -64,7 +70,11 @@ export default function RegistrationForm() {
       if (!phone || !/^\d{10}$/.test(phone))
         formErrors.phone = "A valid 10-digit phone number is required";
     } else if (currentStage === 2) {
-      if (!experience || parseInt(experience) < 0)
+      if (
+        !experience ||
+        isNaN(parseInt(experience)) ||
+        parseInt(experience) < 0
+      )
         formErrors.experience = "Experience must be a positive number";
       if (!position) formErrors.position = "Please select a position";
       if (!battingStyle)
@@ -367,7 +377,7 @@ export default function RegistrationForm() {
                   type="button"
                   whileHover={{ scale: 1.05 }}
                   onClick={prevStage}
-                  className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-400 transition-colors duration-300 flex items-center text-sm md:text-base"
+                  className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg  font-semibold hover:bg-gray-400 transition-colors duration-300 flex items-center text-sm md:text-base"
                 >
                   <BiCricketBall className="mr-2" /> Previous
                 </motion.button>
@@ -473,11 +483,13 @@ const InputField = ({
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 text-sm md:text-base"
+      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 text-sm md:text-base ${
+        error ? "border-red-500" : "border-gray-300"
+      }`}
       required
       {...props}
     />
-    {error && <p className="text-red-500 text-xs md:text-sm">{error}</p>}
+    {error && <p className="text-red-500 text-xs md:text-sm mt-1">{error}</p>}
   </div>
 );
 
@@ -502,7 +514,9 @@ const SelectField = ({
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 text-sm md:text-base"
+      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 text-sm md:text-base ${
+        error ? "border-red-500" : "border-gray-300"
+      }`}
       required
     >
       {options.map((option) => (
@@ -511,6 +525,6 @@ const SelectField = ({
         </option>
       ))}
     </select>
-    {error && <p className="text-red-500 text-xs md:text-sm">{error}</p>}
+    {error && <p className="text-red-500 text-xs md:text-sm mt-1">{error}</p>}
   </div>
 );
